@@ -33,7 +33,7 @@ while newgame:
             temp = random.sample(l[i], k=5)
             print(temp)
             for j in range(5):
-                print(j,i)
+                print("pos_y:", j, "letra:", i)
                 bingo.colocar_numero(j, i, str(temp[j]), jugador+1)
     newgame = False
 
