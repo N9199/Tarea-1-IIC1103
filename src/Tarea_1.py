@@ -33,7 +33,7 @@ class Application(tk.Frame):
             group = tk.LabelFrame(group_master, text=word[i])
             for j in range(5):
                 label = tk.Label(group, text=0)
-                carton.carton[i].append(label)
+                carton.carton[i].append(0)
                 label.grid(row=j,column=i)
 
             group.pack(padx=10, pady=10, side="left")
@@ -44,6 +44,8 @@ class Application(tk.Frame):
     def colocar_numero(self, pos_y, letra, numero, jugador):
         carton = self.jugadores[jugador-1]
         try:
+            print(len(carton.carton))
+            print(len(carton.carton[letra]))
             label = carton.carton[letra][pos_y]
             label.config(text = numero)
         except KeyError:
