@@ -36,7 +36,7 @@ def new_game():
         monto = bingo.preguntar_monto(i + 1)
         temp = simpledialog.askinteger(
             "Apuesta", "Jugador " + str(i + 1) + " cuanto quieres apostar (disponible:" + str(monto) + ")")
-        while temp is None or temp > monto or temp < 0:
+        while temp is None or temp > monto or temp <= 0:
             temp = simpledialog.askinteger("Apuesta", "Jugador " + str(
                 i + 1) + " por favor ingrese un valor valido (disponible:" + str(monto) + ")")
         apuesta.append(temp)
@@ -101,7 +101,7 @@ def simular_turno():
             asdf2[k] = 2
         else:
             asdf2[k] = 1
-    print(asdf2)
+
     if asdf2 != [1, 1]:
         if asdf2[0] < asdf2[1]:
             monto = bingo.preguntar_monto(2)
@@ -119,17 +119,19 @@ def simular_turno():
             for k in range(2):
                 monto = bingo.preguntar_monto(k + 1)
                 bingo.mostrar_dinero(k + 1, monto + apuesta[k])
-        temp = simpledialog.askstring("Nuevo juego", "Quieren jugar de nuevo?")
-        while temp.lower() != "si" and temp.lower() != "no":
-            temp = simpledialog.askstring(
-                "Nuevo juego", "Quieren jugar de nuevo?")
-        if temp == "no" or bingo.preguntar_monto(1) == 0 or bingo.preguntar_monto(1) == 0:
+        if bingo.preguntar_monto(1) == 0 or bingo.preguntar_monto(1) == 0:
+            temp = "no"
+        else:
+            temp = simpledialog.askstring("Nuevo juego", "Quieren jugar de nuevo?")
+            while temp.lower() != "si" and temp.lower() != "no":
+                temp = simpledialog.askstring("Nuevo juego", "Quieren jugar de nuevo?")
+        if temp == "no":
+            print("Hasta luego")
             bingo.cerrar_ventana()
         else:
             temp = new_game()
             lista = temp[1]
             apuesta = temp[0]
-
 
 for k in range(2):
     bingo.mostrar_dinero(k + 1, 0)
@@ -137,6 +139,5 @@ for k in range(2):
 temp = new_game()
 apuesta = temp[0]
 lista = temp[1]
-print(lista)
 bingo.button.config(command=simular_turno)
 bingo.mainloop()
