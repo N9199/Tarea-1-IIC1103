@@ -7,28 +7,71 @@ from Tarea_1 import *
 root = tk.Tk().geometry('{}x{}'.format("550", "650"))
 bingo = Application(master=root)
 
+
+def new_game():
+    for i in range(5):
+        for j in range(5):
+            for k in range(2):
+                bingo.marcar_numero(i, j, False, k + 1)
+    if bingo.preguntar_monto(1) == 0 and bingo.preguntar_monto(2) == 0:
+        for i in range(len(bingo.jugadores)):
+            temp = simpledialog.askinteger(
+                "Monto", "Hola Jugador " + str(i + 1) + ", cual es monto que desea cargar para este juego?")
+            while temp is None:
+                temp = simpledialog.askinteger(
+                    "Monto", "Jugador " + str(i + 1) + ", por favor ingrese un monto")
+            bingo.mostrar_dinero(i + 1, temp)
+
+    for jugador in range(len(bingo.jugadores)):
+        b = [[], [], [], [], []]
+        for i in range(100):
+            b[int(i / 20)].append(i + 1)
+
+        for i in range(len(b)):
+            temp = random.sample(b[i], k=5)
+            for j in range(5):
+                bingo.colocar_numero(j, i, str(temp[j]), jugador + 1)
+    apuesta = []
+    for i in range(len(bingo.jugadores)):
+        monto = bingo.preguntar_monto(i + 1)
+        temp = simpledialog.askinteger(
+            "Apuesta", "Jugador " + str(i + 1) + " cuanto quieres apostar (disponible:" + str(monto) + ")")
+        while temp is None or temp > monto or temp < 0:
+            temp = simpledialog.askinteger("Apuesta", "Jugador " + str(
+                i + 1) + " por favor ingrese un valor valido (disponible:" + str(monto) + ")")
+        apuesta.append(temp)
+        bingo.mostrar_dinero(i + 1, monto - temp)
+
+    lista = []
+    for i in range(100):
+        lista.append(i + 1)
+    random.shuffle(lista)
+    return [apuesta, lista]
+
+
 def simular_turno():
     """Funcion que simula los turnos del bingo"""
-    temp = l.pop()
+    global lista
+    global apuesta
+    temp = lista.pop()
     a = 0
-    for i in range(5):
-        if a==2:
+    for i in range(5): 
+        if a == 2:
             break
         for j in range(5):
-            if bingo.obtener_numero(i, j, 1)==temp:
+            if bingo.obtener_numero(i, j, 1) == temp:
                 bingo.marcar_numero(i, j, True, 1)
-                a+=1
-            if bingo.obtener_numero(i, j, 2)==temp:
+                a += 1
+            if bingo.obtener_numero(i, j, 2) == temp:
                 bingo.marcar_numero(i, j, True, 2)
-                a+=1
-            if a==2:
+                a += 1
+            if a == 2:
                 break
-    print("Check")
     asdf2 = [1, 1]
     for i in range(5):
         for j in range(5):
             for k in range(2):
-                if asdf2[k] and not bingo.esta_marcado(i, j, k+1):
+                if asdf2[k] and not bingo.esta_marcado(i, j, k + 1):
                     asdf2[k] = 0
 
     for k in range(2):
@@ -40,7 +83,7 @@ def simular_turno():
     for i in range(5):
         for j in range(5):
             for k in range(2):
-                if asdf2[k] and ((i<2 and abs(j-2)==2) or (i>=2 and j == 2)) and not bingo.esta_marcado(i, j, k+1):
+                if asdf2[k] and ((i < 2 and abs(j - 2) == 2) or (i >= 2 and j == 2)) and not bingo.esta_marcado(i, j, k + 1):
                     asdf2[k] = 0
 
     for k in range(2):
@@ -50,76 +93,50 @@ def simular_turno():
             asdf2[k] = 1
     for i in range(5):
         for k in range(2):
-            if asdf2[k] and not bingo.esta_marcado(i, i, k+1):
+            if asdf2[k] and not bingo.esta_marcado(i, i, k + 1):
                 asdf2[k] = 0
-    
+
     for k in range(2):
         if asdf2[k]:
             asdf2[k] = 2
         else:
             asdf2[k] = 1
-    print("Alguine gana?")
-    if asdf2!=[1, 1]:
-        if asdf2[0]<asdf2[1]:
+    print(asdf2)
+    if asdf2 != [1, 1]:
+        if asdf2[0] < asdf2[1]:
             monto = bingo.preguntar_monto(2)
             temp = 0
             for n in apuesta:
-                temp+=n
+                temp += n
             bingo.mostrar_dinero(2, monto + temp)
-        elif asdf2[0]>asdf2[1]:
+        elif asdf2[0] > asdf2[1]:
             monto = bingo.preguntar_monto(1)
             temp = 0
             for n in apuesta:
-                temp+=n
+                temp += n
             bingo.mostrar_dinero(1, monto + temp)
         else:
             for k in range(2):
-                monto = bingo.preguntar_monto(k+1)
-                bingo.mostrar_dinero(k+1, monto+apuesta[k])
-        gamefinish = True
-
-
-for i in range(len(bingo.jugadores)):
-    temp = simpledialog.askinteger("Monto", "Hola Jugador "+str(i+1)+", cual es monto que desea cargar para este juego?")
-    while temp is None:
-        temp = simpledialog.askinteger("Monto", "Jugador "+str(i+1)+", por favor ingrese un monto")
-    bingo.mostrar_dinero(i+1, temp)
-
-bingo.button.config(command=simular_turno)
-
-newgame = True
-while newgame:
-    gamefinish = False
-    for jugador in range(len(bingo.jugadores)):
-        l = [[], [], [], [], []]
-        for i in range(100):
-            l[int(i/20)].append(i+1)
-
-        for i in range(len(l)):
-            temp = random.sample(l[i], k=5)
-            for j in range(5):
-                bingo.colocar_numero(j, i, str(temp[j]), jugador+1)
-    apuesta = []
-    for i in range(len(bingo.jugadores)):
-        monto = bingo.preguntar_monto(i+1)
-        temp = simpledialog.askinteger("Apuesta", "Jugador "+str(i+1)+" cuanto quieres apostar (disponible:"+str(monto)+")")
-        while temp is None or temp>monto or temp<0:
-            temp = simpledialog.askinteger("Apuesta", "Jugador "+str(i+1)+" por favor ingrese un valor valido (disponible:"+str(monto)+")")
-        apuesta.append(temp)
-        bingo.mostrar_dinero(i+1, monto-temp)
-    l = []
-    for i in range(100):
-        l.append(i+1)
-    random.shuffle(l)
-    timeout = time.time() + 5
-    while(not gamefinish and time.time()<timeout):
-        time.sleep(0.5)
-    temp = simpledialog.askstring("Nuevo juego", "Quieren jugar de nuevo?")
-    while temp.lower()!="si" and temp.lower()!="no":
+                monto = bingo.preguntar_monto(k + 1)
+                bingo.mostrar_dinero(k + 1, monto + apuesta[k])
         temp = simpledialog.askstring("Nuevo juego", "Quieren jugar de nuevo?")
-    if temp=="si":
-        newgame = True
-    else:
-        newgame = False
+        while temp.lower() != "si" and temp.lower() != "no":
+            temp = simpledialog.askstring(
+                "Nuevo juego", "Quieren jugar de nuevo?")
+        if temp == "no" or bingo.preguntar_monto(1) == 0 or bingo.preguntar_monto(1) == 0:
+            bingo.cerrar_ventana()
+        else:
+            temp = new_game()
+            lista = temp[1]
+            apuesta = temp[0]
 
+
+for k in range(2):
+    bingo.mostrar_dinero(k + 1, 0)
+
+temp = new_game()
+apuesta = temp[0]
+lista = temp[1]
+print(lista)
+bingo.button.config(command=simular_turno)
 bingo.mainloop()
