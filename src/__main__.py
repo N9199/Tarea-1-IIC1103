@@ -21,14 +21,17 @@ def new_game():
                 temp = simpledialog.askinteger(
                     "Monto", "Jugador " + str(i + 1) + ", por favor ingrese un monto")
             bingo.mostrar_dinero(i + 1, temp)
-
+    b = [[], [], [], [], []]
+    for i in range(100):
+        b[int(i / 20)].append(i + 1)
+    
     for jugador in range(len(bingo.jugadores)):
-        b = [[], [], [], [], []]
-        for i in range(100):
-            b[int(i / 20)].append(i + 1)
-
         for i in range(len(b)):
             temp = random.sample(b[i], k=5)
+            #if jugador:
+                #temp = b[i][:5]
+            #else:
+                #temp = random.sample(b[i], k=5)
             for j in range(5):
                 bingo.colocar_numero(j, i, str(temp[j]), jugador + 1)
     apuesta = []
@@ -46,6 +49,8 @@ def new_game():
     for i in range(100):
         lista.append(i + 1)
     random.shuffle(lista)
+    #lista = [45, 44, 43, 22, 62, 81, 1]
+    #print(lista)
     return [apuesta, lista]
 
 
@@ -54,6 +59,7 @@ def simular_turno():
     global lista
     global apuesta
     temp = lista.pop()
+    print(temp)
     a = 0
     for i in range(5): 
         if a == 2:
@@ -71,37 +77,39 @@ def simular_turno():
     for i in range(5):
         for j in range(5):
             for k in range(2):
-                if asdf2[k] and not bingo.esta_marcado(i, j, k + 1):
+                if asdf2[k]==1 and not bingo.esta_marcado(i, j, k + 1):
                     asdf2[k] = 0
-
+    #print(asdf2)
     for k in range(2):
         if asdf2[k]:
             asdf2[k] = 4
         else:
             asdf2[k] = 1
-
+    #print(asdf2)
     for i in range(5):
         for j in range(5):
             for k in range(2):
-                if asdf2[k] and ((i < 2 and abs(j - 2) == 2) or (i >= 2 and j == 2)) and not bingo.esta_marcado(i, j, k + 1):
+                if asdf2[k]==1 and ((i < 2 and abs(j + i - 2) == 2) or (i >= 2 and j == 2)) and not bingo.esta_marcado(i, j, k + 1):
+                    #print("Bingo")
                     asdf2[k] = 0
-
+    #print(asdf2)
     for k in range(2):
         if asdf2[k]:
             asdf2[k] = 3
         else:
             asdf2[k] = 1
+    #print(asdf2)
     for i in range(5):
         for k in range(2):
-            if asdf2[k] and not bingo.esta_marcado(i, i, k + 1):
+            if asdf2[k]==1 and not bingo.esta_marcado(i, i, k + 1):
                 asdf2[k] = 0
-
+    #print(asdf2)
     for k in range(2):
         if asdf2[k]:
             asdf2[k] = 2
         else:
             asdf2[k] = 1
-
+    #print(asdf2)
     if asdf2 != [1, 1]:
         if asdf2[0] < asdf2[1]:
             monto = bingo.preguntar_monto(2)
@@ -119,7 +127,7 @@ def simular_turno():
             for k in range(2):
                 monto = bingo.preguntar_monto(k + 1)
                 bingo.mostrar_dinero(k + 1, monto + apuesta[k])
-        if bingo.preguntar_monto(1) == 0 or bingo.preguntar_monto(1) == 0:
+        if bingo.preguntar_monto(1) == 0 or bingo.preguntar_monto(2) == 0:
             temp = "no"
         else:
             temp = simpledialog.askstring("Nuevo juego", "Quieren jugar de nuevo?")
